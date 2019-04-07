@@ -82,11 +82,12 @@ CREATE TABLE repair_shop(
 );
 --
 CREATE TABLE repair_history(
-    carSerialNum INTEGER PRIMARY KEY,
-    year        INTEGER PRIMARY KEY,
+    carSerialNum INTEGER,
+    year        INTEGER,
     cost        INTEGER,
     numServices INTEGER,
     --
+    PRIMARY KEY (carSerialNum, year),
     CONSTRAINT rhIC1 FOREIGN KEY (carSerialNum)
                      REFERENCES car(serialNum)
                     ON DELETE CASCADE
@@ -101,12 +102,13 @@ CREATE TABLE languages(
 );
 --
 CREATE TABLE service(
-    rSid    INTEGER PRIMARY KEY,
-    carSerialNum INTEGER PRIMARY KEY, 
+    rSid    INTEGER,
+    carSerialNum INTEGER,
     sDate   DATE,
     cost    INTEGER,
     reason  CHAR(40),
     --
+    PRIMARY KEY (rSid, carSerialNum),
     CONSTRAINT sIC1 FOREIGN KEY (rSid)
                     REFERENCES repair_shop(rSid)
                     ON DELETE CASCADE,
