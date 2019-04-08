@@ -1,12 +1,16 @@
+SET ECHO ON
+--
 DROP TABLE branch CASCADE CONSTRAINTS;
 DROP TABLE car CASCADE CONSTRAINTS;
 DROP TABLE employee CASCADE CONSTRAINTS;
+/*
 DROP TABLE customer CASCADE CONSTRAINTS;
 DROP TABLE rental CASCADE CONSTRAINTS;
 DROP TABLE repair_shop CASCADE CONSTRAINTS;
 DROP TABLE repair_history CASCADE CONSTRAINTS;
 DROP TABLE langauges CASCADE CONSTRAINTS;
 DROP TABLE service CASCADE CONSTRAINTS;
+*/
 --
 CREATE TABLE car(
     serialNum INTEGER PRIMARY KEY,
@@ -32,19 +36,16 @@ CREATE TABLE branch(
     bAddress CHAR(20),
     lotSize INTEGER,
     managerSSN INTEGER,
-    managerStartDate DATE,
-    --
+    managerStartDate DATE
 );
 --
 CREATE TABLE employee(
     eSSN      INTEGER PRIMARY KEY,
     name      CHAR(20),
     bID       INTEGER,
-    startDate DATE,
-    --
-    CONSTRAINT eIC1 FOREIGN KEY (bID)
-                    REFERENCES branch(bID)
+    startDate DATE
 );
+/*
 --
 CREATE TABLE customer(
     licenseID   INTEGER PRIMARY KEY,
@@ -122,6 +123,7 @@ CREATE TABLE service(
                     REFERENCES car(serialNum)
                     ON DELETE CASCADE
 );
+*/
 
 /*
 Forgien Keys
@@ -131,3 +133,8 @@ ALTER TABLE car ADD CONSTRAINT FK_1
 --
 ALTER TABLE branch ADD CONSTRAINT FK_2
                     FOREIGN KEY (managerSSN) REFERENCES employee(eSSN);
+--
+ALTER TABLE employee ADD CONSTRAINT FK_3
+                    FOREIGN KEY (bID) REFERENCES branch(bID);
+--
+SET ECHO OFF
