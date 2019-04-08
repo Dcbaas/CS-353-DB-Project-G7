@@ -3,8 +3,8 @@ SET ECHO ON
 DROP TABLE branch CASCADE CONSTRAINTS;
 DROP TABLE car CASCADE CONSTRAINTS;
 DROP TABLE employee CASCADE CONSTRAINTS;
+DROP TABLE customer CASCADE CONSTRAINTS;A
 /*
-DROP TABLE customer CASCADE CONSTRAINTS;
 DROP TABLE rental CASCADE CONSTRAINTS;
 DROP TABLE repair_shop CASCADE CONSTRAINTS;
 DROP TABLE repair_history CASCADE CONSTRAINTS;
@@ -45,7 +45,6 @@ CREATE TABLE employee(
     bID       INTEGER,
     startDate DATE
 );
-/*
 --
 CREATE TABLE customer(
     licenseID   INTEGER PRIMARY KEY,
@@ -55,11 +54,9 @@ CREATE TABLE customer(
     name        CHAR(20),
     consultantSSN INTEGER,
     --
-    CONSTRAINT cIC1 FOREIGN KEY (consultantSSN)
-                    REFERENCES employee(eSSN),
-    --
-    CONSTRAINT cIC2 CHECK(age > 25)
+    CONSTRAINT cIC1 CHECK(age > 25)
 );
+/*
 --
 CREATE TABLE rental(
     orderID INTEGER PRIMARY KEY,
@@ -136,5 +133,8 @@ ALTER TABLE branch ADD CONSTRAINT FK_2
 --
 ALTER TABLE employee ADD CONSTRAINT FK_3
                     FOREIGN KEY (bID) REFERENCES branch(bID);
+--
+ALTER TABLE customer ADD CONSTRAINT FK_4
+                    FOREIGN KEY (consultantSSN) REFERENCES employee(eSSN);
 --
 SET ECHO OFF
