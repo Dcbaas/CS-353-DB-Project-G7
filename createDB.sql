@@ -34,11 +34,8 @@ CREATE TABLE branch(
     managerSSN INTEGER,
     managerStartDate DATE,
     --
-    CONSTRAINT bIC1 (FOREIGN KEY (managerSSN)
-                REFERENCES employee(eSSN)
-                NULLABLE
-            )
 );
+--
 CREATE TABLE employee(
     eSSN      INTEGER PRIMARY KEY,
     name      CHAR(20),
@@ -131,4 +128,6 @@ Forgien Keys
 */
 ALTER TABLE car ADD CONSTRAINT FK_1
                     FOREIGN KEY (bID) REFERENCES branch(bID);
-
+--
+ALTER TABLE branch ADD CONSTRAINT FK_2
+                    FOREIGN KEY (managerSSN) REFERENCES employee(eSSN);
