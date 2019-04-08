@@ -1,3 +1,26 @@
+DROP TABLE branch CASCADE CONSTRAINTS;
+DROP TABLE car CASCADE CONSTRAINTS;
+DROP TABLE employee CASCADE CONSTRAINTS;
+DROP TABLE customer CASCADE CONSTRAINTS;
+DROP TABLE rental CASCADE CONSTRAINTS;
+DROP TABLE repair_shop CASCADE CONSTRAINTS;
+DROP TABLE repair_history CASCADE CONSTRAINTS;
+DROP TABLE langauges CASCADE CONSTRAINTS;
+DROP TABLE service CASCADE CONSTRAINTS;
+
+CREATE TABLE branch(
+    bID INTEGER PRIMARY KEY,
+    bAddress CHAR(20),
+    lotSize INTEGER,
+    managerSSN INTEGER,
+    managerStartDate DATE,
+    --
+    CONSTRAINT bIC1 (FOREIGN KEY (managerSSN)
+                REFERENCES employee(eSSN)
+                NULLABLE
+            )
+);
+--
 CREATE TABLE car(
     serialNum INTEGER PRIMARY KEY,
     carModel  CHAR(20),
@@ -11,24 +34,13 @@ CREATE TABLE car(
     CONSTRAINT cIC1 FOREIGN KEY (bID)
                 REFERENCES branch(bID),
     --
-    CONSTRAINT cIC2 CHECK (carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
+    CONSTRAINT cIC2 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
     --
-    CONSTRAINT cIC3 CHECK NOT(carType = 'economy' AND carRate < 50 OR carRate >= 150),
+    CONSTRAINT cIC3 CHECK (NOT(carType = 'economy' AND carRate < 50 OR carRate >= 150)),
     --
-    CONSTRAINT cIC4 CHECK NOT(carType = 'premium' AND carRate < 150 OR carRate >= 450),
+    CONSTRAINT cIC4 CHECK (NOT(carType = 'premium' AND carRate < 150 OR carRate >= 450)),
     --
-    CONSTRAINT cIC5 CHECK NOT(carType = 'luxlux' AND carRate < 450)
-);
---
-CREATE TABLE branch(
-    bID INTEGER PRIMARY KEY,
-    bAddress CHAR(20),
-    lotSize INTEGER,
-    managerSSN INTEGER,
-    managerStartDate DATE,
-    --
-    CONSTRAINT bIC1 FOREIGN KEY (managerSSN)
-                REFERENCES employee(eSSN)
+    CONSTRAINT cIC5 CHECK (NOT(carType = 'luxlux' AND carRate < 450))
 );
 --
 CREATE TABLE employee(
