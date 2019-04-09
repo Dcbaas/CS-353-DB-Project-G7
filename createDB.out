@@ -1,0 +1,216 @@
+SQL> --
+SQL> DROP TABLE branch CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE car CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE employee CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE customer CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE rental CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE repair_shop CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE repair_history CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE languages CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE service CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> --
+SQL> CREATE TABLE car(
+  2  	 serialNum INTEGER PRIMARY KEY,
+  3  	 carModel  CHAR(20),
+  4  	 carType   CHAR(20),
+  5  	 carRate   INTEGER,
+  6  	 color	   CHAR(15),
+  7  	 licecePlateNum CHAR(8),
+  8  	 year	   INTEGER,
+  9  	 bID	   INTEGER,
+ 10  	 --
+ 11  	 CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
+ 12  	 --
+ 13  	 CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND carRate < 50 OR carRate >= 150)),
+ 14  	 --
+ 15  	 CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND carRate < 150 OR carRate >= 450)),
+ 16  	 --
+ 17  	 CONSTRAINT carIC4 CHECK (NOT(carType = 'luxury' AND carRate < 450))
+ 18  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE branch(
+  2  	 bID INTEGER PRIMARY KEY,
+  3  	 bAddress CHAR(20),
+  4  	 lotSize INTEGER,
+  5  	 managerSSN INTEGER,
+  6  	 managerStartDate DATE
+  7  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE employee(
+  2  	 eSSN	   INTEGER PRIMARY KEY,
+  3  	 name	   CHAR(20),
+  4  	 bID	   INTEGER,
+  5  	 startDate DATE
+  6  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE customer(
+  2  	 licenseID   INTEGER PRIMARY KEY,
+  3  	 insurance   CHAR(20),
+  4  	 billingAddr CHAR(30),
+  5  	 age	     INTEGER,
+  6  	 name	     CHAR(20),
+  7  	 consultantSSN INTEGER,
+  8  	 --
+  9  	 CONSTRAINT customerIC1 CHECK(age > 25)
+ 10  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE rental(
+  2  	 orderID INTEGER PRIMARY KEY,
+  3  	 cost	 CHAR(15),
+  4  	 startDate DATE,
+  5  	 returnDate DATE,
+  6  	 milesUsed INTEGER,
+  7  	 renterLicenseID INTEGER,
+  8  	 bID	  INTEGER,
+  9  	 carSerialNum INTEGER,
+ 10  	 --
+ 11  	 CONSTRAINT rentIC1 CHECK(startDate < returnDate)
+ 12  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE repair_shop(
+  2  	 rSid INTEGER PRIMARY KEY,
+  3  	 garageSpaces INTEGER,
+  4  	 rAddress CHAR(15)
+  5  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE repair_history(
+  2  	 carSerialNum INTEGER,
+  3  	 year	     INTEGER,
+  4  	 cost	     INTEGER,
+  5  	 numServices INTEGER,
+  6  	 --
+  7  	 PRIMARY KEY (carSerialNum, year),
+  8  	 CONSTRAINT rhIC1 FOREIGN KEY (carSerialNum)
+  9  			  REFERENCES car(serialNum)
+ 10  			 ON DELETE CASCADE
+ 11  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE languages(
+  2  	 eSSN INTEGER,
+  3  	 language CHAR(15),
+  4  	 --
+  5  	 PRIMARY KEY (eSSN, language)
+  6  );
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> CREATE TABLE service(
+  2  	 rSid	 INTEGER,
+  3  	 carSerialNum INTEGER,
+  4  	 sDate	 DATE,
+  5  	 cost	 INTEGER,
+  6  	 reason  CHAR(40),
+  7  	 --
+  8  	 PRIMARY KEY (rSid, carSerialNum),
+  9  	 CONSTRAINT serviceIC1 FOREIGN KEY (rSid)
+ 10  			 REFERENCES repair_shop(rSid)
+ 11  			 ON DELETE CASCADE,
+ 12  	 --
+ 13  	 CONSTRAINT serviceIC2 FOREIGN KEY (carSerialNum)
+ 14  			 REFERENCES car(serialNum)
+ 15  			 ON DELETE CASCADE
+ 16  );
+
+Table created.
+
+SQL> --
+SQL> /*
+SQL> Forgien Keys that can't be made in thier inital creation.
+SQL> */
+SQL> ALTER TABLE car ADD CONSTRAINT FK_1
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
+  3  			 ON DELETE SET NULL;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE branch ADD CONSTRAINT FK_2
+  2  			 FOREIGN KEY (managerSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE SET NULL;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE employee ADD CONSTRAINT FK_3
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
+  3  			 ON DELETE SET NULL;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE customer ADD CONSTRAINT FK_4
+  2  			 FOREIGN KEY (consultantSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE CASCADE;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_5
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_6
+  2  			 FOREIGN KEY (carSerialNum) REFERENCES car(serialNum);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE languages ADD CONSTRAINT FK_7
+  2  			 FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE CASCADE;
+
+Table altered.
+
+SQL> SET ECHO OFF
