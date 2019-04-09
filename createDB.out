@@ -38,19 +38,19 @@ Table dropped.
 SQL> --
 SQL> CREATE TABLE car(
   2  	 serialNum INTEGER PRIMARY KEY,
-  3  	 carModel  CHAR(20),
-  4  	 carType   CHAR(20),
-  5  	 carRate   INTEGER,
-  6  	 color	   CHAR(15),
-  7  	 licecePlateNum CHAR(8),
+  3  	 carModel  CHAR(20) NOT NULL,
+  4  	 carType   CHAR(20) NOT NULL,
+  5  	 carRate   INTEGER  NOT NULL,
+  6  	 color	   CHAR(15) NOT NULL,
+  7  	 licecePlateNum CHAR(8) NOT NULL,
   8  	 year	   INTEGER,
   9  	 bID	   INTEGER,
  10  	 --
  11  	 CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
  12  	 --
- 13  	 CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND carRate < 50 OR carRate >= 150)),
+ 13  	 CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND (carRate < 50 OR carRate >= 150))),
  14  	 --
- 15  	 CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND carRate < 150 OR carRate >= 450)),
+ 15  	 CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND (carRate < 150 OR carRate >= 450))),
  16  	 --
  17  	 CONSTRAINT carIC4 CHECK (NOT(carType = 'luxury' AND carRate < 450))
  18  );
@@ -60,7 +60,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE branch(
   2  	 bID INTEGER PRIMARY KEY,
-  3  	 bAddress CHAR(20),
+  3  	 bAddress CHAR(20) NOT NULL,
   4  	 lotSize INTEGER,
   5  	 managerSSN INTEGER,
   6  	 managerStartDate DATE
@@ -71,7 +71,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE employee(
   2  	 eSSN	   INTEGER PRIMARY KEY,
-  3  	 name	   CHAR(20),
+  3  	 name	   CHAR(20) NOT NULL,
   4  	 bID	   INTEGER,
   5  	 startDate DATE
   6  );
@@ -84,7 +84,7 @@ SQL> CREATE TABLE customer(
   3  	 insurance   CHAR(20),
   4  	 billingAddr CHAR(30),
   5  	 age	     INTEGER,
-  6  	 name	     CHAR(20),
+  6  	 name	     CHAR(20) NOT NULL,
   7  	 consultantSSN INTEGER,
   8  	 --
   9  	 CONSTRAINT customerIC1 CHECK(age > 25)
@@ -95,7 +95,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE rental(
   2  	 orderID INTEGER PRIMARY KEY,
-  3  	 cost	 CHAR(15),
+  3  	 cost	 CHAR(15) NOT NULL,
   4  	 startDate DATE,
   5  	 returnDate DATE,
   6  	 milesUsed INTEGER,
@@ -112,7 +112,7 @@ SQL> --
 SQL> CREATE TABLE repair_shop(
   2  	 rSid INTEGER PRIMARY KEY,
   3  	 garageSpaces INTEGER,
-  4  	 rAddress CHAR(15)
+  4  	 rAddress CHAR(15) NOT NULL
   5  );
 
 Table created.
@@ -169,21 +169,24 @@ SQL> Forgien Keys that can't be made in thier inital creation.
 SQL> */
 SQL> ALTER TABLE car ADD CONSTRAINT FK_1
   2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
-  3  			 ON DELETE SET NULL;
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
 
 Table altered.
 
 SQL> --
 SQL> ALTER TABLE branch ADD CONSTRAINT FK_2
   2  			 FOREIGN KEY (managerSSN) REFERENCES employee(eSSN)
-  3  			 ON DELETE SET NULL;
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
 
 Table altered.
 
 SQL> --
 SQL> ALTER TABLE employee ADD CONSTRAINT FK_3
   2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
-  3  			 ON DELETE SET NULL;
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
 
 Table altered.
 

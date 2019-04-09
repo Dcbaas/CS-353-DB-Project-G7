@@ -13,26 +13,26 @@ DROP TABLE service CASCADE CONSTRAINTS;
 --
 CREATE TABLE car(
     serialNum INTEGER PRIMARY KEY,
-    carModel  CHAR(20),
-    carType   CHAR(20),
-    carRate   INTEGER,
-    color     CHAR(15),
-    licecePlateNum CHAR(8),
+    carModel  CHAR(20) NOT NULL,
+    carType   CHAR(20) NOT NULL,
+    carRate   INTEGER  NOT NULL,
+    color     CHAR(15) NOT NULL,
+    licecePlateNum CHAR(8) NOT NULL,
     year      INTEGER, 
     bID       INTEGER,
     --
     CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
     --
-    CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND carRate < 50 OR carRate >= 150)),
+    CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND (carRate < 50 OR carRate >= 150))),
     --
-    CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND carRate < 150 OR carRate >= 450)),
+    CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND (carRate < 150 OR carRate >= 450))),
     --
     CONSTRAINT carIC4 CHECK (NOT(carType = 'luxury' AND carRate < 450))
 );
 --
 CREATE TABLE branch(
     bID INTEGER PRIMARY KEY,
-    bAddress CHAR(20),
+    bAddress CHAR(20) NOT NULL,
     lotSize INTEGER,
     managerSSN INTEGER,
     managerStartDate DATE
@@ -40,7 +40,7 @@ CREATE TABLE branch(
 --
 CREATE TABLE employee(
     eSSN      INTEGER PRIMARY KEY,
-    name      CHAR(20),
+    name      CHAR(20) NOT NULL,
     bID       INTEGER,
     startDate DATE
 );
@@ -50,7 +50,7 @@ CREATE TABLE customer(
     insurance   CHAR(20),
     billingAddr CHAR(30),
     age         INTEGER,
-    name        CHAR(20),
+    name        CHAR(20) NOT NULL,
     consultantSSN INTEGER,
     --
     CONSTRAINT customerIC1 CHECK(age > 25)
@@ -58,7 +58,7 @@ CREATE TABLE customer(
 --
 CREATE TABLE rental(
     orderID INTEGER PRIMARY KEY,
-    cost    CHAR(15),
+    cost    CHAR(15) NOT NULL,
     startDate DATE,
     returnDate DATE,
     milesUsed INTEGER, 
@@ -72,7 +72,7 @@ CREATE TABLE rental(
 CREATE TABLE repair_shop(
     rSid INTEGER PRIMARY KEY,
     garageSpaces INTEGER, 
-    rAddress CHAR(15)
+    rAddress CHAR(15) NOT NULL
 );
 --
 CREATE TABLE repair_history(
@@ -115,17 +115,20 @@ CREATE TABLE service(
 /*
 Forgien Keys that can't be made in thier inital creation.
 */
-ALTER TABLE car ADD CONSTRAINT FK_1
+ALTER TABLE car ADD CONSTRAINT FK_1 
                     FOREIGN KEY (bID) REFERENCES branch(bID)
-                    ON DELETE SET NULL;
+                    ON DELETE SET NULL
+                    DEFERRABLE INITIALLY DEFERRED;
 --
 ALTER TABLE branch ADD CONSTRAINT FK_2
                     FOREIGN KEY (managerSSN) REFERENCES employee(eSSN)
-                    ON DELETE SET NULL;
+                    ON DELETE SET NULL
+                    DEFERRABLE INITIALLY DEFERRED;
 --
 ALTER TABLE employee ADD CONSTRAINT FK_3
                     FOREIGN KEY (bID) REFERENCES branch(bID)
-                    ON DELETE SET NULL;
+                    ON DELETE SET NULL
+                    DEFERRABLE INITIALLY DEFERRED;
 --
 ALTER TABLE customer ADD CONSTRAINT FK_4
                     FOREIGN KEY (consultantSSN) REFERENCES employee(eSSN)
