@@ -13,7 +13,7 @@ DROP TABLE service CASCADE CONSTRAINTS;
 --
 CREATE TABLE car(
     serialNum INTEGER PRIMARY KEY,
-    carModel  CHAR(20) NOT NULL,
+    carModel  CHAR(40) NOT NULL,
     carType   CHAR(20) NOT NULL,
     carRate   INTEGER  NOT NULL,
     color     CHAR(15) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE car(
     year      INTEGER, 
     bID       INTEGER,
     --
-    CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
+    CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxury'),
     --
     CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND (carRate < 50 OR carRate >= 150))),
     --
@@ -58,7 +58,7 @@ CREATE TABLE customer(
 --
 CREATE TABLE rental(
     orderID INTEGER PRIMARY KEY,
-    cost    CHAR(15) NOT NULL,
+    cost    INTEGER NOT NULL,
     startDate DATE,
     returnDate DATE,
     milesUsed INTEGER, 
@@ -72,7 +72,7 @@ CREATE TABLE rental(
 CREATE TABLE repair_shop(
     rSid INTEGER PRIMARY KEY,
     garageSpaces INTEGER, 
-    rAddress CHAR(15) NOT NULL
+    rAddress CHAR(30) NOT NULL
 );
 --
 CREATE TABLE repair_history(

@@ -38,7 +38,7 @@ Table dropped.
 SQL> --
 SQL> CREATE TABLE car(
   2  	 serialNum INTEGER PRIMARY KEY,
-  3  	 carModel  CHAR(20) NOT NULL,
+  3  	 carModel  CHAR(40) NOT NULL,
   4  	 carType   CHAR(20) NOT NULL,
   5  	 carRate   INTEGER  NOT NULL,
   6  	 color	   CHAR(15) NOT NULL,
@@ -46,7 +46,7 @@ SQL> CREATE TABLE car(
   8  	 year	   INTEGER,
   9  	 bID	   INTEGER,
  10  	 --
- 11  	 CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxlux'),
+ 11  	 CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxury'),
  12  	 --
  13  	 CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND (carRate < 50 OR carRate >= 150))),
  14  	 --
@@ -95,7 +95,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE rental(
   2  	 orderID INTEGER PRIMARY KEY,
-  3  	 cost	 CHAR(15) NOT NULL,
+  3  	 cost	 INTEGER NOT NULL,
   4  	 startDate DATE,
   5  	 returnDate DATE,
   6  	 milesUsed INTEGER,
@@ -112,7 +112,7 @@ SQL> --
 SQL> CREATE TABLE repair_shop(
   2  	 rSid INTEGER PRIMARY KEY,
   3  	 garageSpaces INTEGER,
-  4  	 rAddress CHAR(15) NOT NULL
+  4  	 rAddress CHAR(30) NOT NULL
   5  );
 
 Table created.
