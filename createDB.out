@@ -42,7 +42,7 @@ SQL> CREATE TABLE car(
   4  	 carType   CHAR(20) NOT NULL,
   5  	 carRate   INTEGER  NOT NULL,
   6  	 color	   CHAR(15) NOT NULL,
-  7  	 licecePlateNum CHAR(8) NOT NULL,
+  7  	 licensePlateNum CHAR(8) NOT NULL,
   8  	 year	   INTEGER,
   9  	 bID	   INTEGER,
  10  	 --
@@ -210,7 +210,13 @@ SQL> ALTER TABLE rental ADD CONSTRAINT FK_6
 Table altered.
 
 SQL> --
-SQL> ALTER TABLE languages ADD CONSTRAINT FK_7
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_7
+  2  			 FOREIGN KEY (renterLicenseID) REFERENCES customer(licenseID);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE languages ADD CONSTRAINT FK_8
   2  			 FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
   3  			 ON DELETE CASCADE;
 

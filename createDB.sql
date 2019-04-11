@@ -17,7 +17,7 @@ CREATE TABLE car(
     carType   CHAR(20) NOT NULL,
     carRate   INTEGER  NOT NULL,
     color     CHAR(15) NOT NULL,
-    licecePlateNum CHAR(8) NOT NULL,
+    licensePlateNum CHAR(8) NOT NULL,
     year      INTEGER, 
     bID       INTEGER,
     --
@@ -140,7 +140,10 @@ ALTER TABLE rental ADD CONSTRAINT FK_5
 ALTER TABLE rental ADD CONSTRAINT FK_6 
                     FOREIGN KEY (carSerialNum) REFERENCES car(serialNum);
 --
-ALTER TABLE languages ADD CONSTRAINT FK_7
+ALTER TABLE rental ADD CONSTRAINT FK_7
+                    FOREIGN KEY (renterLicenseID) REFERENCES customer(licenseID);
+--
+ALTER TABLE languages ADD CONSTRAINT FK_8
                     FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
                     ON DELETE CASCADE;
 SET ECHO OFF

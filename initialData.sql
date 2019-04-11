@@ -6,8 +6,12 @@ insert into branch values(0, 'Old Kent Road', 10, 885414789, '06-22-1999');
 insert into branch values(1, 'Boardwalk', 56, 996533256, '01-01-1975');
 insert into branch values(2, 'Parks Place', 89, 332547852, '02-18-2019');
 --
-insert into employee values(885414789, 'Steve Tyler', 1, '06-22-199');
 insert into employee values(996533256, 'Larry Kotman', 0, '01-01-1975');
+insert into employee values(123456789, 'Ian Hislop', 0, '04-11-2019');
+insert into employee values(987654321, 'Paul Merton', 0, '04-11-2019');
+insert into employee values(192837465, 'Danny Dire', 0, '04-11-2019');
+--
+insert into employee values(885414789, 'Steve Tyler', 1, '06-22-199');
 insert into employee values(332547852, 'Julia Hildebrand', 2, '02-18-2019');
 --
 /* Invalid employee ssn */
@@ -17,6 +21,14 @@ insert into car values(1962, 'Toyota Prius', 'economy', 86, 'black', 'RED69323',
 insert into car values(74656, 'BMW M3', 'premium', 212, 'yellow', 'DISCO5', 2019, 0);
 insert into car values(2771, 'Rolls Royce Phantom', 'luxury', 555, 'gold', 'OPC 1546', 2016, 2);
 insert into car values(8008, 'Oldsmobile Grantmobile','premium', 250, 'hot pink', 'NCC 1701',1995, 1);
+
+-- Cars at Old Kent Road --
+--Cars that fit the 4 table join --
+insert into car values(0001, 'Ford F-150', 'premium', 155, 'red', 'OBG 4567', 2005, 0);
+insert into car values(0002, 'Toyota Camery', 'economy', 66, 'orange', 'NASCAR', 2007, 0);
+insert into car values(0003, 'Honda Accord', 'economy', 99, 'blue-grey', 'NX 74205', 2019, 0);
+--car that won't be in the 4 table join--
+insert into car values(0004, 'Douge Ram', 'economy', 103, 'pink', 'ABC 123', 2006, 0);
 /*
 This next one is an invalid data point
 */
@@ -45,6 +57,68 @@ insert into languages values(332547852, 'English');
 insert into languages values(885414789, 'French');
 insert into languages values(332547852, 'Spanish');
 insert into languages values(885414789, 'Arabic');
+--
+
+-- 
+insert into customer values(10,'OurCredit','3257 southfeild',42,'Boby Brown',123456789);
+insert into customer values(11,'Sky','64839 johnsonville',58,'John Johnson',123456789);
+insert into customer values(12,'OurCredit','3257 southfeild',42,'Boby Brown',123456789);
+--
+--4 TABLE JOIN RENTALs--
+insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
+insert into rental values(0002, 1200, '11-8-2016', '01-01-2017', 2800, 11, 0, 0003);
+--customer tables that should work -- -- 
+/*
+insert into customer values(1,'NationWide',24581 Chesterfeild,25,Richard Nixon,382462847);
+insert into customer values(1,'HoneyBeeHam','24581 Chesterfeild',25,'Richard Nixon',382462847);
+--2 primary -- 
+insert into customer values(2,'NationWide','24581 Chesterfeild',20,'Richard Nixon',382462847);
+--under 25 -- 
+insert into customer values(3,'NationWide','24581 Chesterfeild',25,'Richard Nixon',382462847);
+-- 25 exactly -- 
+insert into customer values('number','NationWide','24581 Chesterfeild','number','Richard Nixon','number');
+--replaced integers with chars. -- 
+insert into customer values(4,'NationWide','24581 Chesterfeild',25,'Richard Nixon',382462847);
+-- 
+insert into customer values(5,'LONGERTHAN20IIIIIIIII','24581 Chesterfeild',25,'Richard Nixon',382462847);
+insert into customer values(6,'NationWide','LONGERTHAN30IIIIIIIIIIIIIIIIII',25,'Richard Nixon',382462847);
+insert into customer values(7,'NationWide','24581 Chesterfeild',25,'LONGERTHAN20IIIIIIIII',382462847);
+--big chars -- 
+insert into customer values(0,0,0,0,0,0);
+-- putting for everything -- 
+insert into customer values(,,,,,);
+--nothing in here -- 
+-- 
+insert into customer values( , , , , , );
+*/
+--only spaces in here
+-- BASIC QUERIES --
+SELECT *
+FROM car;
+--
+SELECT * 
+FROM branch;
+--
+SELECT * 
+FROM employee;
+--
+SELECT * 
+FROM customer;
+--
+SELECT *
+FROM rental;
+--
+SELECT *
+FROM repair_shop;
+--
+SELECT *
+FROM repair_history;
+--
+SELECT * 
+FROM languages;
+--
+SELECT *
+FROM service;
 --
 COMMIT;
 SET ECHO OFF
