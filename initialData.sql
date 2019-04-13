@@ -6,13 +6,18 @@ insert into branch values(0, 'Old Kent Road', 10, 885414789, '06-22-1999');
 insert into branch values(1, 'Boardwalk', 56, 996533256, '01-01-1975');
 insert into branch values(2, 'Parks Place', 89, 332547852, '02-18-2019');
 --
-insert into employee values(996533256, 'Larry Kotman', 0, '01-01-1975');
-insert into employee values(123456789, 'Ian Hislop', 0, '04-11-2019');
-insert into employee values(987654321, 'Paul Merton', 0, '04-11-2019');
-insert into employee values(192837465, 'Danny Dire', 0, '04-11-2019');
+insert into employee values(996533256, 'Larry Kotman', 0, NULL, '01-01-1975');
+insert into employee values(23456789, 'Sarah Pasco', 0, 996533256, '10-01-2000');
+insert into employee values(123456789, 'Ian Hislop', 0, 23456789, '04-11-2019');
+insert into employee values(987654321, 'Paul Merton', 0, 23456789, '04-11-2019');
+insert into employee values(192837465, 'Danny Dire', 0, 23456789, '04-11-2019');
 --
-insert into employee values(885414789, 'Steve Tyler', 1, '06-22-199');
-insert into employee values(332547852, 'Julia Hildebrand', 2, '02-18-2019');
+insert into employee values(885414789, 'Steve Tyler', 1, NULL, '06-22-199');
+--
+insert into employee values(332547852, 'Julia Hildebrand', 2, NULL, '02-18-2019');
+insert into employee values(112233445, 'Lewis Hamilton', 2, 332547852, '07-08-2009');
+insert into employee values(223344556, 'William Riker', 2, 332547852, '09-28-1987');
+insert into employee values(445566778, 'Micheal Dorn' , 2, 332547852, '09-28-1987');
 --
 /* Invalid employee ssn */
 insert into employee values(123abZH28, 'Grant Iverson', 0, '04-12-2018');
@@ -60,9 +65,16 @@ insert into languages values(885414789, 'Arabic');
 --
 
 -- 
-insert into customer values(10,'OurCredit','3257 southfeild',42,'Boby Brown',123456789);
-insert into customer values(11,'Sky','64839 johnsonville',58,'John Johnson',123456789);
-insert into customer values(12,'OurCredit','3257 southfeild',42,'Boby Brown',123456789);
+insert into customer values(10,'OurCredit','3257 Southfeild',42,'Boby Brown',123456789);
+insert into customer values(11,'Sky','64839 Johnsonville',58,'John Johnson',123456789);
+insert into customer values(12,'OurCredit','3257 Southfeild',70,'Avery Brooks',123456789);
+insert into customer values(13,'Memic', '2345 Bajor Lane', 68, 'Nana Visitor', 123456789);
+insert into customer values(14,'Fedacare','Deep Space 9', 56, 'Julian Bashir', 123456789);
+--
+insert into customer values(15, 'Fedacare','Deep Space 9', 45, 'Nicole de Boer', 987654321);
+insert into customer values(16, 'Ferenicare', 'Deep Space 9', 67, 'Quark', 987654321);
+insert into customer values(17, 'Risaian Services', '7654 Risa Road',74, 'Miles O Brian', 987654321);
+insert into customer values(18, 'Allstate', '7449 Whistleville',30, 'Mr. Chicken', 987654321);
 --
 --4 TABLE JOIN RENTALs--
 insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
@@ -92,6 +104,7 @@ insert into customer values(,,,,,);
 insert into customer values( , , , , , );
 */
 --only spaces in here
+COMMIT;
 -- BASIC QUERIES --
 SELECT *
 FROM car;
@@ -120,6 +133,5 @@ FROM languages;
 SELECT *
 FROM service;
 --
-COMMIT;
 SET ECHO OFF
 SPOOL OFF

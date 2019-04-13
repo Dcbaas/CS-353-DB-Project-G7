@@ -73,8 +73,9 @@ SQL> CREATE TABLE employee(
   2  	 eSSN	   INTEGER PRIMARY KEY,
   3  	 name	   CHAR(20) NOT NULL,
   4  	 bID	   INTEGER,
-  5  	 startDate DATE
-  6  );
+  5  	 supervisorSSN INTEGER NULL,
+  6  	 startDate DATE
+  7  );
 
 Table created.
 
@@ -219,6 +220,14 @@ SQL> --
 SQL> ALTER TABLE languages ADD CONSTRAINT FK_8
   2  			 FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
   3  			 ON DELETE CASCADE;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE employee ADD CONSTRAINT FK_9
+  2  			 FOREIGN KEY (supervisorSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
 
 Table altered.
 

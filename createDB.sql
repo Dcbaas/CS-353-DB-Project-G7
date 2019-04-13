@@ -42,6 +42,7 @@ CREATE TABLE employee(
     eSSN      INTEGER PRIMARY KEY,
     name      CHAR(20) NOT NULL,
     bID       INTEGER,
+    supervisorSSN INTEGER NULL,
     startDate DATE
 );
 --
@@ -146,6 +147,11 @@ ALTER TABLE rental ADD CONSTRAINT FK_7
 ALTER TABLE languages ADD CONSTRAINT FK_8
                     FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
                     ON DELETE CASCADE;
+--
+ALTER TABLE employee ADD CONSTRAINT FK_9
+                    FOREIGN KEY (supervisorSSN) REFERENCES employee(eSSN)
+                    ON DELETE SET NULL
+                    DEFERRABLE INITIALLY DEFERRED;
 SET ECHO OFF
 SPOOL OFF
 
