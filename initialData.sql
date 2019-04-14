@@ -79,6 +79,7 @@ insert into customer values(18, 'Allstate', '7449 Whistleville',30, 'Mr. Chicken
 --4 TABLE JOIN RENTALs--
 insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
 insert into rental values(0002, 1200, '11-8-2016', '01-01-2017', 2800, 11, 0, 0003);
+insert into rental values(0003, 900, '02-25-2019', '02-27-2019', 310, 10, 2, 2771);
 --customer tables that should work -- -- 
 /*
 insert into customer values(1,'NationWide',24581 Chesterfeild,25,Richard Nixon,382462847);

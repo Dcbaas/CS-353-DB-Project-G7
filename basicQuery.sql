@@ -87,6 +87,17 @@ WHERE C.carRate > 150 AND
 /*
 A relational Division query
 */
+SELECT C.licenseID, C.name
+FROM customer C
+WHERE NOT EXISTS ((SELECT Cr.serialNum
+                FROM car Cr
+                WHERE Cr.carType = 'luxury')
+                MINUS
+                (SELECT Cr.serialNum
+                FROM rental R, Car Cr
+                WHERE R.carSerialNum = Cr.serialNum AND
+                    R.renterLicenseID = C.licenseID AND
+                    Cr.carType = 'luxury'));
 --
 /*
 An outer join query 
