@@ -1,0 +1,790 @@
+SQL> --
+SQL> DROP TABLE branch CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE car CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE employee CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE customer CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE rental CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE repair_shop CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE repair_history CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE languages CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> DROP TABLE service CASCADE CONSTRAINTS;
+
+Table dropped.
+
+SQL> --
+SQL> CREATE TABLE car(
+  2  	 serialNum INTEGER PRIMARY KEY,
+  3  	 carModel  CHAR(40) NOT NULL,
+  4  	 carType   CHAR(20) NOT NULL,
+  5  	 carRate   INTEGER  NOT NULL,
+  6  	 color	   CHAR(15) NOT NULL,
+  7  	 licensePlateNum CHAR(8) NOT NULL,
+  8  	 year	   INTEGER,
+  9  	 bID	   INTEGER,
+ 10  	 --
+ 11  	 CONSTRAINT carIC1 CHECK(carType = 'economy' OR carType = 'premium' OR carType = 'luxury'),
+ 12  	 --
+ 13  	 CONSTRAINT carIC2 CHECK (NOT(carType = 'economy' AND (carRate < 50 OR carRate >= 150))),
+ 14  	 --
+ 15  	 CONSTRAINT carIC3 CHECK (NOT(carType = 'premium' AND (carRate < 150 OR carRate >= 450))),
+ 16  	 --
+ 17  	 CONSTRAINT carIC4 CHECK (NOT(carType = 'luxury' AND carRate < 450))
+ 18  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE branch(
+  2  	 bID INTEGER PRIMARY KEY,
+  3  	 bAddress CHAR(20) NOT NULL,
+  4  	 lotSize INTEGER,
+  5  	 managerSSN INTEGER,
+  6  	 managerStartDate DATE
+  7  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE employee(
+  2  	 eSSN	   INTEGER PRIMARY KEY,
+  3  	 name	   CHAR(20) NOT NULL,
+  4  	 bID	   INTEGER,
+  5  	 supervisorSSN INTEGER NULL,
+  6  	 startDate DATE
+  7  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE customer(
+  2  	 licenseID   INTEGER PRIMARY KEY,
+  3  	 insurance   CHAR(20),
+  4  	 billingAddr CHAR(30),
+  5  	 age	     INTEGER,
+  6  	 name	     CHAR(20) NOT NULL,
+  7  	 consultantSSN INTEGER,
+  8  	 --
+  9  	 CONSTRAINT customerIC1 CHECK(age > 25)
+ 10  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE rental(
+  2  	 orderID INTEGER PRIMARY KEY,
+  3  	 cost	 INTEGER NOT NULL,
+  4  	 startDate DATE,
+  5  	 returnDate DATE,
+  6  	 milesUsed INTEGER,
+  7  	 renterLicenseID INTEGER,
+  8  	 bID	  INTEGER,
+  9  	 carSerialNum INTEGER,
+ 10  	 --
+ 11  	 CONSTRAINT rentIC1 CHECK(startDate < returnDate)
+ 12  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE repair_shop(
+  2  	 rSid INTEGER PRIMARY KEY,
+  3  	 garageSpaces INTEGER,
+  4  	 rAddress CHAR(30) NOT NULL
+  5  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE repair_history(
+  2  	 carSerialNum INTEGER,
+  3  	 year	     INTEGER,
+  4  	 cost	     INTEGER,
+  5  	 numServices INTEGER,
+  6  	 --
+  7  	 PRIMARY KEY (carSerialNum, year),
+  8  	 CONSTRAINT rhIC1 FOREIGN KEY (carSerialNum)
+  9  			  REFERENCES car(serialNum)
+ 10  			 ON DELETE CASCADE
+ 11  );
+
+Table created.
+
+SQL> --
+SQL> CREATE TABLE languages(
+  2  	 eSSN INTEGER,
+  3  	 language CHAR(15),
+  4  	 --
+  5  	 PRIMARY KEY (eSSN, language)
+  6  );
+
+Table created.
+
+SQL> 
+SQL> --
+SQL> CREATE TABLE service(
+  2  	 rSid	 INTEGER,
+  3  	 carSerialNum INTEGER,
+  4  	 sDate	 DATE,
+  5  	 cost	 INTEGER,
+  6  	 reason  CHAR(40),
+  7  	 --
+  8  	 PRIMARY KEY (rSid, carSerialNum),
+  9  	 CONSTRAINT serviceIC1 FOREIGN KEY (rSid)
+ 10  			 REFERENCES repair_shop(rSid)
+ 11  			 ON DELETE CASCADE,
+ 12  	 --
+ 13  	 CONSTRAINT serviceIC2 FOREIGN KEY (carSerialNum)
+ 14  			 REFERENCES car(serialNum)
+ 15  			 ON DELETE CASCADE
+ 16  );
+
+Table created.
+
+SQL> --
+SQL> /*
+SQL> Forgien Keys that can't be made in thier inital creation.
+SQL> */
+SQL> ALTER TABLE car ADD CONSTRAINT FK_1
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE branch ADD CONSTRAINT FK_2
+  2  			 FOREIGN KEY (managerSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE employee ADD CONSTRAINT FK_3
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID)
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE customer ADD CONSTRAINT FK_4
+  2  			 FOREIGN KEY (consultantSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE CASCADE;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_5
+  2  			 FOREIGN KEY (bID) REFERENCES branch(bID);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_6
+  2  			 FOREIGN KEY (carSerialNum) REFERENCES car(serialNum);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE rental ADD CONSTRAINT FK_7
+  2  			 FOREIGN KEY (renterLicenseID) REFERENCES customer(licenseID);
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE languages ADD CONSTRAINT FK_8
+  2  			 FOREIGN KEY (eSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE CASCADE;
+
+Table altered.
+
+SQL> --
+SQL> ALTER TABLE employee ADD CONSTRAINT FK_9
+  2  			 FOREIGN KEY (supervisorSSN) REFERENCES employee(eSSN)
+  3  			 ON DELETE SET NULL
+  4  			 DEFERRABLE INITIALLY DEFERRED;
+
+Table altered.
+
+SQL> --
+SQL> --
+SQL> --
+SQL> --
+SQL> SET FEEDBACK OFF
+SQL> --
+SQL> alter session set	NLS_DATE_FORMAT = 'MM-DD-YYYY';
+SQL> --
+SQL> insert into branch values(0, 'Old Kent Road', 10, 885414789, '06-22-1999');
+SQL> insert into branch values(1, 'Boardwalk', 56, 996533256, '01-01-1975');
+SQL> insert into branch values(2, 'Parks Place', 89, 332547852, '02-18-2019');
+SQL> --
+SQL> insert into employee values(996533256, 'Larry Kotman', 0, NULL, '01-01-1975');
+SQL> insert into employee values(23456789, 'Sarah Pasco', 0, 996533256, '10-01-2000');
+SQL> insert into employee values(123456789, 'Ian Hislop', 0, 23456789, '04-11-2019');
+SQL> insert into employee values(987654321, 'Paul Merton', 0, 23456789, '04-11-2019');
+SQL> insert into employee values(192837465, 'Danny Dire', 0, 23456789, '04-11-2019');
+SQL> --
+SQL> insert into employee values(885414789, 'Steve Tyler', 1, NULL, '06-22-199');
+SQL> --
+SQL> insert into employee values(332547852, 'Julia Hildebrand', 2, NULL, '02-18-2019');
+SQL> insert into employee values(112233445, 'Lewis Hamilton', 2, 332547852, '07-08-2009');
+SQL> insert into employee values(223344556, 'William Riker', 2, 332547852, '09-28-1987');
+SQL> insert into employee values(445566778, 'Micheal Dorn' , 2, 332547852, '09-28-1987');
+SQL> --
+SQL> /* Invalid employee ssn */
+SQL> insert into employee values(123abZH28, 'Grant Iverson', 0, '04-12-2018');
+insert into employee values(123abZH28, 'Grant Iverson', 0, '04-12-2018')
+                               *
+ERROR at line 1:
+ORA-00917: missing comma 
+
+
+SQL> --
+SQL> insert into car values(1962, 'Toyota Prius', 'economy', 86, 'black', 'RED69323', 2015, 1);
+SQL> insert into car values(74656, 'BMW M3', 'premium', 212, 'yellow', 'DISCO5', 2019, 0);
+SQL> insert into car values(2771, 'Rolls Royce Phantom', 'luxury', 555, 'gold', 'OPC 1546', 2016, 2);
+SQL> insert into car values(8008, 'Oldsmobile Grantmobile','premium', 250, 'hot pink', 'NCC 1701',1995, 1);
+SQL> 
+SQL> -- Cars at Old Kent Road --
+SQL> --Cars that fit the 4 table join --
+SQL> insert into car values(0001, 'Ford F-150', 'premium', 155, 'red', 'OBG 4567', 2005, 0);
+SQL> insert into car values(0002, 'Toyota Camery', 'economy', 66, 'orange', 'NASCAR', 2007, 0);
+SQL> insert into car values(0003, 'Honda Accord', 'economy', 99, 'blue-grey', 'NX 74205', 2019, 0);
+SQL> --car that won't be in the 4 table join--
+SQL> insert into car values(0004, 'Douge Ram', 'economy', 103, 'pink', 'ABC 123', 2006, 0);
+SQL> /*
+SQL> This next one is an invalid data point
+SQL> */
+SQL> insert into car values(4003, 'Yugo', 'garbage tier', 99, 'white', 'SOVIET1', 1975, 0);
+insert into car values(4003, 'Yugo', 'garbage tier', 99, 'white', 'SOVIET1', 1975, 0)
+*
+ERROR at line 1:
+ORA-02290: check constraint (BAASDAV.CARIC1) violated 
+
+
+SQL> --
+SQL> insert into repair_shop values(123, 25, '606 Laker Lane, MI');
+SQL> insert into repair_shop values(399, 32, '4017 Lubber Street, MI');
+SQL> --
+SQL> insert into service values(123, 1962, '03-27-2019', 250, 'Broken headlight');
+SQL> insert into service values(123, 74656, '10-13-2018', 75, 'Oil change');
+SQL> insert into service values(399, 2771, '06-07-2018', 200, 'New door handle');
+SQL> insert into service values(399, 1962, '02-19-2019', 25, 'New air filter');
+SQL> /*Next one is invalid data entry (car serial num does not exist)*/
+SQL> insert into service values(399, 77777, '01-01-2019', 100, 'Invalid entry');
+insert into service values(399, 77777, '01-01-2019', 100, 'Invalid entry')
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (BAASDAV.SERVICEIC2) violated - parent key not 
+found 
+
+
+SQL> --
+SQL> insert into repair_history values(74656, 2018, 75, 1);
+SQL> insert into repair_history values(2771, 2018, 400, 2);
+SQL> insert into repair_history values(1962, 2019, 275, 2);
+SQL> insert into repair_history values(1962, 2018, 350, 3);
+SQL> insert into repair_history values(1962, 2017, 600, 1);
+SQL> /* Next one is invalid data entry (serial and year have already been entered*/
+SQL> insert into repair_history values(1962, 2017, 100, 1);
+insert into repair_history values(1962, 2017, 100, 1)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (BAASDAV.SYS_C00704154) violated 
+
+
+SQL> --
+SQL> insert into languages values(885414789, 'English');
+SQL> insert into languages values(332547852, 'English');
+SQL> insert into languages values(885414789, 'French');
+SQL> insert into languages values(332547852, 'Spanish');
+SQL> insert into languages values(885414789, 'Arabic');
+SQL> --
+SQL> 
+SQL> --
+SQL> insert into customer values(10,'OurCredit','3257 Southfeild',42,'Boby Brown',123456789);
+SQL> insert into customer values(11,'Sky','64839 Johnsonville',58,'John Johnson',123456789);
+SQL> insert into customer values(12,'OurCredit','3257 Southfeild',70,'Avery Brooks',123456789);
+SQL> insert into customer values(13,'Memic', '2345 Bajor Lane', 68, 'Nana Visitor', 123456789);
+SQL> insert into customer values(14,'Fedacare','Deep Space 9', 56, 'Julian Bashir', 123456789);
+SQL> --
+SQL> insert into customer values(15, 'Fedacare','Deep Space 9', 45, 'Nicole de Boer', 987654321);
+SQL> insert into customer values(16, 'Ferenicare', 'Deep Space 9', 67, 'Quark', 987654321);
+SQL> insert into customer values(17, 'Risaian Services', '7654 Risa Road',74, 'Miles O Brian', 987654321);
+SQL> insert into customer values(18, 'Allstate', '7449 Whistleville',30, 'Mr. Chicken', 987654321);
+SQL> --
+SQL> --4 TABLE JOIN RENTALs--
+SQL> insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
+SQL> insert into rental values(0002, 1200, '11-8-2016', '01-01-2017', 2800, 11, 0, 0003);
+SQL> insert into rental values(0003, 900, '02-25-2019', '02-27-2019', 310, 10, 2, 2771);
+SQL> --
+SQL> SET FEEDBACK ON
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> --
+SQL> SELECT *
+  2  FROM car;
+
+ SERIALNUM CARMODEL                                 CARTYPE                     
+---------- ---------------------------------------- --------------------        
+   CARRATE COLOR           LICENSEP       YEAR        BID                       
+---------- --------------- -------- ---------- ----------                       
+      1962 Toyota Prius                             economy                     
+        86 black           RED69323       2015          1                       
+                                                                                
+     74656 BMW M3                                   premium                     
+       212 yellow          DISCO5         2019          0                       
+                                                                                
+      2771 Rolls Royce Phantom                      luxury                      
+       555 gold            OPC 1546       2016          2                       
+                                                                                
+
+ SERIALNUM CARMODEL                                 CARTYPE                     
+---------- ---------------------------------------- --------------------        
+   CARRATE COLOR           LICENSEP       YEAR        BID                       
+---------- --------------- -------- ---------- ----------                       
+      8008 Oldsmobile Grantmobile                   premium                     
+       250 hot pink        NCC 1701       1995          1                       
+                                                                                
+         1 Ford F-150                               premium                     
+       155 red             OBG 4567       2005          0                       
+                                                                                
+         2 Toyota Camery                            economy                     
+        66 orange          NASCAR         2007          0                       
+                                                                                
+
+ SERIALNUM CARMODEL                                 CARTYPE                     
+---------- ---------------------------------------- --------------------        
+   CARRATE COLOR           LICENSEP       YEAR        BID                       
+---------- --------------- -------- ---------- ----------                       
+         3 Honda Accord                             economy                     
+        99 blue-grey       NX 74205       2019          0                       
+                                                                                
+         4 Douge Ram                                economy                     
+       103 pink            ABC 123        2006          0                       
+                                                                                
+
+8 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM branch;
+
+       BID BADDRESS                LOTSIZE MANAGERSSN MANAGERSTA                
+---------- -------------------- ---------- ---------- ----------                
+         0 Old Kent Road                10  885414789 06-22-1999                
+         1 Boardwalk                    56  996533256 01-01-1975                
+         2 Parks Place                  89  332547852 02-18-2019                
+
+3 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM employee;
+
+      ESSN NAME                        BID SUPERVISORSSN STARTDATE              
+---------- -------------------- ---------- ------------- ----------             
+ 996533256 Larry Kotman                  0               01-01-1975             
+  23456789 Sarah Pasco                   0     996533256 10-01-2000             
+ 123456789 Ian Hislop                    0      23456789 04-11-2019             
+ 987654321 Paul Merton                   0      23456789 04-11-2019             
+ 192837465 Danny Dire                    0      23456789 04-11-2019             
+ 885414789 Steve Tyler                   1               06-22-0199             
+ 332547852 Julia Hildebrand              2               02-18-2019             
+ 112233445 Lewis Hamilton                2     332547852 07-08-2009             
+ 223344556 William Riker                 2     332547852 09-28-1987             
+ 445566778 Micheal Dorn                  2     332547852 09-28-1987             
+
+10 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM customer;
+
+ LICENSEID INSURANCE            BILLINGADDR                           AGE       
+---------- -------------------- ------------------------------ ----------       
+NAME                 CONSULTANTSSN                                              
+-------------------- -------------                                              
+        10 OurCredit            3257 Southfeild                        42       
+Boby Brown               123456789                                              
+                                                                                
+        11 Sky                  64839 Johnsonville                     58       
+John Johnson             123456789                                              
+                                                                                
+        12 OurCredit            3257 Southfeild                        70       
+Avery Brooks             123456789                                              
+                                                                                
+
+ LICENSEID INSURANCE            BILLINGADDR                           AGE       
+---------- -------------------- ------------------------------ ----------       
+NAME                 CONSULTANTSSN                                              
+-------------------- -------------                                              
+        13 Memic                2345 Bajor Lane                        68       
+Nana Visitor             123456789                                              
+                                                                                
+        14 Fedacare             Deep Space 9                           56       
+Julian Bashir            123456789                                              
+                                                                                
+        15 Fedacare             Deep Space 9                           45       
+Nicole de Boer           987654321                                              
+                                                                                
+
+ LICENSEID INSURANCE            BILLINGADDR                           AGE       
+---------- -------------------- ------------------------------ ----------       
+NAME                 CONSULTANTSSN                                              
+-------------------- -------------                                              
+        16 Ferenicare           Deep Space 9                           67       
+Quark                    987654321                                              
+                                                                                
+        17 Risaian Services     7654 Risa Road                         74       
+Miles O Brian            987654321                                              
+                                                                                
+        18 Allstate             7449 Whistleville                      30       
+Mr. Chicken              987654321                                              
+                                                                                
+
+9 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM rental;
+
+   ORDERID       COST STARTDATE  RETURNDATE  MILESUSED RENTERLICENSEID          
+---------- ---------- ---------- ---------- ---------- ---------------          
+       BID CARSERIALNUM                                                         
+---------- ------------                                                         
+         1        224 06-02-2012 06-04-2012        300              10          
+         0            1                                                         
+                                                                                
+         2       1200 11-08-2016 01-01-2017       2800              11          
+         0            3                                                         
+                                                                                
+         3        900 02-25-2019 02-27-2019        310              10          
+         2         2771                                                         
+                                                                                
+
+3 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM repair_shop;
+
+      RSID GARAGESPACES RADDRESS                                                
+---------- ------------ ------------------------------                          
+       123           25 606 Laker Lane, MI                                      
+       399           32 4017 Lubber Street, MI                                  
+
+2 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM repair_history;
+
+CARSERIALNUM       YEAR       COST NUMSERVICES                                  
+------------ ---------- ---------- -----------                                  
+       74656       2018         75           1                                  
+        2771       2018        400           2                                  
+        1962       2019        275           2                                  
+        1962       2018        350           3                                  
+        1962       2017        600           1                                  
+
+5 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM languages;
+
+      ESSN LANGUAGE                                                             
+---------- ---------------                                                      
+ 332547852 English                                                              
+ 332547852 Spanish                                                              
+ 885414789 Arabic                                                               
+ 885414789 English                                                              
+ 885414789 French                                                               
+
+5 rows selected.
+
+SQL> --
+SQL> SELECT *
+  2  FROM service;
+
+      RSID CARSERIALNUM SDATE            COST                                   
+---------- ------------ ---------- ----------                                   
+REASON                                                                          
+----------------------------------------                                        
+       123         1962 03-27-2019        250                                   
+Broken headlight                                                                
+                                                                                
+       123        74656 10-13-2018         75                                   
+Oil change                                                                      
+                                                                                
+       399         2771 06-07-2018        200                                   
+New door handle                                                                 
+                                                                                
+
+      RSID CARSERIALNUM SDATE            COST                                   
+---------- ------------ ---------- ----------                                   
+REASON                                                                          
+----------------------------------------                                        
+       399         1962 02-19-2019         25                                   
+New air filter                                                                  
+                                                                                
+
+4 rows selected.
+
+SQL> --
+SQL> --
+SQL> --
+SQL> --
+SQL> --
+SQL> /*
+SQL> 4 table join
+SQL> For all rentals that have customers whos age is over 35 and rented a car from the Old Kent Road branch that was made after 2005. find the orderID, the customer ssn, carMake, and licensePlateNumber.
+SQL> */
+SQL> SELECT R.orderID, C.licenseID, car.carModel, car.licensePlateNum
+  2  FROM rental R, customer C, car, branch B
+  3  WHERE C.age > 35 AND
+  4  	 B.bAddress = 'Old Kent Road' AND
+  5  	 car.year >= 2005 AND
+  6  	 R.renterLicenseID = C.licenseID AND
+  7  	 R.bID = B.bID AND
+  8  	 R.carSerialNum = car.serialNum
+  9  ORDER BY R.startDate;
+
+   ORDERID  LICENSEID CARMODEL                                 LICENSEP         
+---------- ---------- ---------------------------------------- --------         
+         1         10 Ford F-150                               OBG 4567         
+         2         11 Honda Accord                             NX 74205         
+
+2 rows selected.
+
+SQL> 
+SQL> --
+SQL> /*
+SQL> Self Join
+SQL> Find the ssn, and names, and start dates of all the employees that work at branch 2 who started before thier supervisior started work.
+SQL> */
+SQL> SELECT E1.eSSN, E1.name, E1.startDate
+  2  FROM employee E1, employee E2
+  3  WHERE E1.supervisorSSN = E2.eSSN AND
+  4  	 E1.startDate < E2.startDate AND
+  5  	 E1.bID = 2
+  6  ORDER BY E1.eSSN;
+
+      ESSN NAME                 STARTDATE                                       
+---------- -------------------- ----------                                      
+ 112233445 Lewis Hamilton       07-08-2009                                      
+ 223344556 William Riker        09-28-1987                                      
+ 445566778 Micheal Dorn         09-28-1987                                      
+
+3 rows selected.
+
+SQL> /*
+SQL> */
+SQL> --
+SQL> /*
+SQL> Union/Intersect/Minus (Pick one or more for a query)
+SQL> Find the license Plate Number, car model, and car year for every luxury car that has been in for service within the past 4 years (Since 2019)
+SQL> */
+SQL> SELECT C.licensePlateNum, C.carModel, C.year
+  2  FROM car C
+  3  WHERE C.carType = 'luxury'
+  4  UNION
+  5  SELECT C.licensePlateNum, C.carModel, C.year
+  6  FROM car C, service S
+  7  WHERE C.serialNum = S.carSerialNum AND
+  8  	 S.sDate > '01-01-2015';
+
+LICENSEP CARMODEL                                       YEAR                    
+-------- ---------------------------------------- ----------                    
+DISCO5   BMW M3                                         2019                    
+OPC 1546 Rolls Royce Phantom                            2016                    
+RED69323 Toyota Prius                                   2015                    
+
+3 rows selected.
+
+SQL> --
+SQL> /*
+SQL> Sum/Avg/Max/Min (Pick one or more for a query)
+SQL> FOr every car that has been rented out, find the total revenue generated by each indiviaul. List Licsence plate number, model, and year.
+SQL> */
+SQL> SELECT C.licensePlateNum, C.carModel, C.year, SUM(R.cost)
+  2  FROM car C, rental R
+  3  WHERE C.serialNum = R.carSerialNum
+  4  GROUP BY C.licensePlateNum, C.carModel, C.year;
+
+LICENSEP CARMODEL                                       YEAR SUM(R.COST)        
+-------- ---------------------------------------- ---------- -----------        
+NX 74205 Honda Accord                                   2019        1200        
+OPC 1546 Rolls Royce Phantom                            2016         900        
+OBG 4567 Ford F-150                                     2005         224        
+
+3 rows selected.
+
+SQL> --
+SQL> /*
+SQL> GROUP BY, HAVING, ORDER BY all in the sqme query.
+SQL> Find the ssn, and name of all employees who have consulted with more than 3 customers and list how many they have consulted with.
+SQL> */
+SQL> SELECT E.eSSN, E.name, COUNT(*)
+  2  FROM customer C, employee E
+  3  WHERE E.eSSN = C.consultantSSN
+  4  GROUP BY E.eSSN, E.name
+  5  HAVING COUNT(*) > 3
+  6  ORDER BY COUNT(*);
+
+      ESSN NAME                   COUNT(*)                                      
+---------- -------------------- ----------                                      
+ 987654321 Paul Merton                   4                                      
+ 123456789 Ian Hislop                    5                                      
+
+2 rows selected.
+
+SQL> --
+SQL> /*
+SQL> Correlated subquery
+SQL> Find the serial number, rate, model, year, and type of all cars whose rate is higher than the average rate of their type tier.
+SQL> */
+SQL> SELECT C.serialNum, C.carRate, C.carModel, C.year, C.carType, C.licensePlateNum
+  2  FROM Car C
+  3  WHERE C.carRate >
+  4  	 (SELECT AVG(C2.CarRate)
+  5  	 FROM car C2
+  6  	 WHERE C.carType = C2.carType)
+  7  ORDER BY C.serialNum;
+
+ SERIALNUM    CARRATE CARMODEL                                       YEAR       
+---------- ---------- ---------------------------------------- ----------       
+CARTYPE              LICENSEP                                                   
+-------------------- --------                                                   
+         3         99 Honda Accord                                   2019       
+economy              NX 74205                                                   
+                                                                                
+         4        103 Douge Ram                                      2006       
+economy              ABC 123                                                    
+                                                                                
+      8008        250 Oldsmobile Grantmobile                         1995       
+premium              NCC 1701                                                   
+                                                                                
+
+ SERIALNUM    CARRATE CARMODEL                                       YEAR       
+---------- ---------- ---------------------------------------- ----------       
+CARTYPE              LICENSEP                                                   
+-------------------- --------                                                   
+     74656        212 BMW M3                                         2019       
+premium              DISCO5                                                     
+                                                                                
+
+4 rows selected.
+
+SQL> --
+SQL> /*
+SQL> non correlated subquery
+SQL> Find the serial number, rate, model, year, type, and licece plate number of every car that has a rate greater than $150 but has yet to be rented out.
+SQL> */
+SQL> SELECT C.serialNum, C.CarRate, C.carModel, C.year, C.carType, C.licensePlateNum
+  2  FROM car C
+  3  WHERE C.carRate > 150 AND
+  4  	 C.serialNum NOT IN
+  5  	 (SELECT R.carSerialNum
+  6  	     FROM Rental R);
+
+ SERIALNUM    CARRATE CARMODEL                                       YEAR       
+---------- ---------- ---------------------------------------- ----------       
+CARTYPE              LICENSEP                                                   
+-------------------- --------                                                   
+      8008        250 Oldsmobile Grantmobile                         1995       
+premium              NCC 1701                                                   
+                                                                                
+     74656        212 BMW M3                                         2019       
+premium              DISCO5                                                     
+                                                                                
+
+2 rows selected.
+
+SQL> 
+SQL> --
+SQL> /*
+SQL> A relational Division query
+SQL> */
+SQL> SELECT C.licenseID, C.name
+  2  FROM customer C
+  3  WHERE NOT EXISTS ((SELECT Cr.serialNum
+  4  		     FROM car Cr
+  5  		     WHERE Cr.carType = 'luxury')
+  6  		     MINUS
+  7  		     (SELECT Cr.serialNum
+  8  		     FROM rental R, Car Cr
+  9  		     WHERE R.carSerialNum = Cr.serialNum AND
+ 10  			 R.renterLicenseID = C.licenseID AND
+ 11  			 Cr.carType = 'luxury'));
+
+ LICENSEID NAME                                                                 
+---------- --------------------                                                 
+        10 Boby Brown                                                           
+
+1 row selected.
+
+SQL> --
+SQL> /*
+SQL> An outer join query
+SQL> List all employees and list thier ....
+SQL> */
+SQL> SELECT E.eSSN, E.name, C.name
+  2  FROM employee E LEFT OUTER JOIN
+  3  			 customer C ON E.eSSN = C.consultantSSN;
+
+      ESSN NAME                 NAME                                            
+---------- -------------------- --------------------                            
+ 123456789 Ian Hislop           Boby Brown                                      
+ 123456789 Ian Hislop           John Johnson                                    
+ 123456789 Ian Hislop           Avery Brooks                                    
+ 123456789 Ian Hislop           Nana Visitor                                    
+ 123456789 Ian Hislop           Julian Bashir                                   
+ 987654321 Paul Merton          Nicole de Boer                                  
+ 987654321 Paul Merton          Quark                                           
+ 987654321 Paul Merton          Miles O Brian                                   
+ 987654321 Paul Merton          Mr. Chicken                                     
+ 112233445 Lewis Hamilton                                                       
+ 996533256 Larry Kotman                                                         
+
+      ESSN NAME                 NAME                                            
+---------- -------------------- --------------------                            
+ 223344556 William Riker                                                        
+ 192837465 Danny Dire                                                           
+  23456789 Sarah Pasco                                                          
+ 885414789 Steve Tyler                                                          
+ 445566778 Micheal Dorn                                                         
+ 332547852 Julia Hildebrand                                                     
+
+17 rows selected.
+
+SQL> --
+SQL> SPOOL OFF
