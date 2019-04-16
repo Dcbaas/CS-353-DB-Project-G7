@@ -1,3 +1,11 @@
+SQL> /*
+SQL> CIS 353 - Database Design Project
+SQL> 
+SQL> David Baas
+SQL> Julia Hildebrand
+SQL> Vlasia Niotis
+SQL> Grant Iversen
+SQL> */
 SQL> --
 SQL> DROP TABLE branch CASCADE CONSTRAINTS;
 
@@ -96,7 +104,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE rental(
   2  	 orderID INTEGER PRIMARY KEY,
-  3  	 cost	 INTEGER NOT NULL,
+  3  	 rCost	  INTEGER NOT NULL,
   4  	 startDate DATE,
   5  	 returnDate DATE,
   6  	 milesUsed INTEGER,
@@ -122,7 +130,7 @@ SQL> --
 SQL> CREATE TABLE repair_history(
   2  	 carSerialNum INTEGER,
   3  	 year	     INTEGER,
-  4  	 cost	     INTEGER,
+  4  	 rhCost        INTEGER,
   5  	 numServices INTEGER,
   6  	 --
   7  	 PRIMARY KEY (carSerialNum, year),
@@ -149,7 +157,7 @@ SQL> CREATE TABLE service(
   2  	 rSid	 INTEGER,
   3  	 carSerialNum INTEGER,
   4  	 sDate	 DATE,
-  5  	 cost	 INTEGER,
+  5  	 sCost	  INTEGER,
   6  	 reason  CHAR(40),
   7  	 --
   8  	 PRIMARY KEY (rSid, carSerialNum),
@@ -268,6 +276,7 @@ SQL> --
 SQL> insert into car values(1962, 'Toyota Prius', 'economy', 86, 'black', 'RED69323', 2015, 1);
 SQL> insert into car values(74656, 'BMW M3', 'premium', 212, 'yellow', 'DISCO5', 2019, 0);
 SQL> insert into car values(2771, 'Rolls Royce Phantom', 'luxury', 555, 'gold', 'OPC 1546', 2016, 2);
+SQL> insert into car values(4003, 'Bently Continental', 'luxury', 525, 'navy', 'FDC 5499', 2014, 2);
 SQL> insert into car values(8008, 'Oldsmobile Grantmobile','premium', 250, 'hot pink', 'NCC 1701',1995, 1);
 SQL> 
 SQL> -- Cars at Old Kent Road --
@@ -315,7 +324,7 @@ SQL> insert into repair_history values(1962, 2017, 100, 1);
 insert into repair_history values(1962, 2017, 100, 1)
 *
 ERROR at line 1:
-ORA-00001: unique constraint (BAASDAV.SYS_C00704154) violated 
+ORA-00001: unique constraint (BAASDAV.SYS_C00713838) violated 
 
 
 SQL> --
@@ -327,7 +336,7 @@ SQL> insert into languages values(885414789, 'Arabic');
 SQL> --
 SQL> 
 SQL> --
-SQL> insert into customer values(10,'OurCredit','3257 Southfeild',42,'Boby Brown',123456789);
+SQL> insert into customer values(10,'OurCredit','3257 Southfeild',42,'Bobby Brown',123456789);
 SQL> insert into customer values(11,'Sky','64839 Johnsonville',58,'John Johnson',123456789);
 SQL> insert into customer values(12,'OurCredit','3257 Southfeild',70,'Avery Brooks',123456789);
 SQL> insert into customer values(13,'Memic', '2345 Bajor Lane', 68, 'Nana Visitor', 123456789);
@@ -341,7 +350,13 @@ SQL> --
 SQL> --4 TABLE JOIN RENTALs--
 SQL> insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
 SQL> insert into rental values(0002, 1200, '11-8-2016', '01-01-2017', 2800, 11, 0, 0003);
-SQL> insert into rental values(0003, 900, '02-25-2019', '02-27-2019', 310, 10, 2, 2771);
+SQL> insert into rental values(0003, 900, '02-25-2019', '02-27-2019', 310, 12, 2, 2771);
+SQL> insert into rental values(0004, 2625, '06-02-2015', '06-07-2015', 636, 13, 2, 2771);
+SQL> insert into rental values(0005, 1234, '05-30-2014', '06-05-2014', 1003, 14, 0, 0002);
+SQL> insert into rental values(0006, 355, '02-05-2019', '02-10-2019', 37, 15, 0, 0003);
+SQL> insert into rental values(0007, 134, '03-14-2019', '03-15-2019', 147, 16, 0, 0004);
+SQL> insert into rental values(0008, 189, '03-15-2019', '03-17-2019', 259, 17, 0, 0001);
+SQL> insert into rental values(0009, 350, '03-20-2019', '03-22-2019', 500, 18, 2, 2771);
 SQL> --
 SQL> SET FEEDBACK ON
 SQL> COMMIT;
@@ -370,20 +385,23 @@ SQL> SELECT *
 ---------- ---------------------------------------- --------------------        
    CARRATE COLOR           LICENSEP       YEAR        BID                       
 ---------- --------------- -------- ---------- ----------                       
+      4003 Bently Continental                       luxury                      
+       525 navy            FDC 5499       2014          2                       
+                                                                                
       8008 Oldsmobile Grantmobile                   premium                     
        250 hot pink        NCC 1701       1995          1                       
                                                                                 
          1 Ford F-150                               premium                     
        155 red             OBG 4567       2005          0                       
                                                                                 
-         2 Toyota Camery                            economy                     
-        66 orange          NASCAR         2007          0                       
-                                                                                
 
  SERIALNUM CARMODEL                                 CARTYPE                     
 ---------- ---------------------------------------- --------------------        
    CARRATE COLOR           LICENSEP       YEAR        BID                       
 ---------- --------------- -------- ---------- ----------                       
+         2 Toyota Camery                            economy                     
+        66 orange          NASCAR         2007          0                       
+                                                                                
          3 Honda Accord                             economy                     
         99 blue-grey       NX 74205       2019          0                       
                                                                                 
@@ -391,7 +409,7 @@ SQL> SELECT *
        103 pink            ABC 123        2006          0                       
                                                                                 
 
-8 rows selected.
+9 rows selected.
 
 SQL> --
 SQL> SELECT *
@@ -433,7 +451,7 @@ SQL> SELECT *
 NAME                 CONSULTANTSSN                                              
 -------------------- -------------                                              
         10 OurCredit            3257 Southfeild                        42       
-Boby Brown               123456789                                              
+Bobby Brown              123456789                                              
                                                                                 
         11 Sky                  64839 Johnsonville                     58       
 John Johnson             123456789                                              
@@ -476,7 +494,7 @@ SQL> --
 SQL> SELECT *
   2  FROM rental;
 
-   ORDERID       COST STARTDATE  RETURNDATE  MILESUSED RENTERLICENSEID          
+   ORDERID      RCOST STARTDATE  RETURNDATE  MILESUSED RENTERLICENSEID          
 ---------- ---------- ---------- ---------- ---------- ---------------          
        BID CARSERIALNUM                                                         
 ---------- ------------                                                         
@@ -486,11 +504,39 @@ SQL> SELECT *
          2       1200 11-08-2016 01-01-2017       2800              11          
          0            3                                                         
                                                                                 
-         3        900 02-25-2019 02-27-2019        310              10          
+         3        900 02-25-2019 02-27-2019        310              12          
          2         2771                                                         
                                                                                 
 
-3 rows selected.
+   ORDERID      RCOST STARTDATE  RETURNDATE  MILESUSED RENTERLICENSEID          
+---------- ---------- ---------- ---------- ---------- ---------------          
+       BID CARSERIALNUM                                                         
+---------- ------------                                                         
+         4       2625 06-02-2015 06-07-2015        636              13          
+         2         2771                                                         
+                                                                                
+         5       1234 05-30-2014 06-05-2014       1003              14          
+         0            2                                                         
+                                                                                
+         6        355 02-05-2019 02-10-2019         37              15          
+         0            3                                                         
+                                                                                
+
+   ORDERID      RCOST STARTDATE  RETURNDATE  MILESUSED RENTERLICENSEID          
+---------- ---------- ---------- ---------- ---------- ---------------          
+       BID CARSERIALNUM                                                         
+---------- ------------                                                         
+         7        134 03-14-2019 03-15-2019        147              16          
+         0            4                                                         
+                                                                                
+         8        189 03-15-2019 03-17-2019        259              17          
+         0            1                                                         
+                                                                                
+         9        350 03-20-2019 03-22-2019        500              18          
+         2         2771                                                         
+                                                                                
+
+9 rows selected.
 
 SQL> --
 SQL> SELECT *
@@ -507,7 +553,7 @@ SQL> --
 SQL> SELECT *
   2  FROM repair_history;
 
-CARSERIALNUM       YEAR       COST NUMSERVICES                                  
+CARSERIALNUM       YEAR     RHCOST NUMSERVICES                                  
 ------------ ---------- ---------- -----------                                  
        74656       2018         75           1                                  
         2771       2018        400           2                                  
@@ -535,7 +581,7 @@ SQL> --
 SQL> SELECT *
   2  FROM service;
 
-      RSID CARSERIALNUM SDATE            COST                                   
+      RSID CARSERIALNUM SDATE           SCOST                                   
 ---------- ------------ ---------- ----------                                   
 REASON                                                                          
 ----------------------------------------                                        
@@ -549,7 +595,7 @@ Oil change
 New door handle                                                                 
                                                                                 
 
-      RSID CARSERIALNUM SDATE            COST                                   
+      RSID CARSERIALNUM SDATE           SCOST                                   
 ---------- ------------ ---------- ----------                                   
 REASON                                                                          
 ----------------------------------------                                        
@@ -581,9 +627,13 @@ SQL> SELECT R.orderID, C.licenseID, car.carModel, car.licensePlateNum
    ORDERID  LICENSEID CARMODEL                                 LICENSEP         
 ---------- ---------- ---------------------------------------- --------         
          1         10 Ford F-150                               OBG 4567         
+         5         14 Toyota Camery                            NASCAR           
          2         11 Honda Accord                             NX 74205         
+         6         15 Honda Accord                             NX 74205         
+         7         16 Douge Ram                                ABC 123          
+         8         17 Ford F-150                               OBG 4567         
 
-2 rows selected.
+6 rows selected.
 
 SQL> 
 SQL> --
@@ -625,28 +675,31 @@ SQL> SELECT C.licensePlateNum, C.carModel, C.year
 LICENSEP CARMODEL                                       YEAR                    
 -------- ---------------------------------------- ----------                    
 DISCO5   BMW M3                                         2019                    
+FDC 5499 Bently Continental                             2014                    
 OPC 1546 Rolls Royce Phantom                            2016                    
 RED69323 Toyota Prius                                   2015                    
 
-3 rows selected.
+4 rows selected.
 
 SQL> --
 SQL> /*
 SQL> Sum/Avg/Max/Min (Pick one or more for a query)
 SQL> FOr every car that has been rented out, find the total revenue generated by each indiviaul. List Licsence plate number, model, and year.
 SQL> */
-SQL> SELECT C.licensePlateNum, C.carModel, C.year, SUM(R.cost)
+SQL> SELECT C.licensePlateNum, C.carModel, C.year, SUM(R.rCost)
   2  FROM car C, rental R
   3  WHERE C.serialNum = R.carSerialNum
   4  GROUP BY C.licensePlateNum, C.carModel, C.year;
 
-LICENSEP CARMODEL                                       YEAR SUM(R.COST)        
--------- ---------------------------------------- ---------- -----------        
-NX 74205 Honda Accord                                   2019        1200        
-OPC 1546 Rolls Royce Phantom                            2016         900        
-OBG 4567 Ford F-150                                     2005         224        
+LICENSEP CARMODEL                                       YEAR SUM(R.RCOST)       
+-------- ---------------------------------------- ---------- ------------       
+NASCAR   Toyota Camery                                  2007         1234       
+NX 74205 Honda Accord                                   2019         1555       
+OPC 1546 Rolls Royce Phantom                            2016         3875       
+OBG 4567 Ford F-150                                     2005          413       
+ABC 123  Douge Ram                                      2006          134       
 
-3 rows selected.
+5 rows selected.
 
 SQL> --
 SQL> /*
@@ -690,19 +743,22 @@ economy              NX 74205
          4        103 Douge Ram                                      2006       
 economy              ABC 123                                                    
                                                                                 
-      8008        250 Oldsmobile Grantmobile                         1995       
-premium              NCC 1701                                                   
+      2771        555 Rolls Royce Phantom                            2016       
+luxury               OPC 1546                                                   
                                                                                 
 
  SERIALNUM    CARRATE CARMODEL                                       YEAR       
 ---------- ---------- ---------------------------------------- ----------       
 CARTYPE              LICENSEP                                                   
 -------------------- --------                                                   
+      8008        250 Oldsmobile Grantmobile                         1995       
+premium              NCC 1701                                                   
+                                                                                
      74656        212 BMW M3                                         2019       
 premium              DISCO5                                                     
                                                                                 
 
-4 rows selected.
+5 rows selected.
 
 SQL> --
 SQL> /*
@@ -723,11 +779,14 @@ CARTYPE              LICENSEP
       8008        250 Oldsmobile Grantmobile                         1995       
 premium              NCC 1701                                                   
                                                                                 
+      4003        525 Bently Continental                             2014       
+luxury               FDC 5499                                                   
+                                                                                
      74656        212 BMW M3                                         2019       
 premium              DISCO5                                                     
                                                                                 
 
-2 rows selected.
+3 rows selected.
 
 SQL> 
 SQL> --
@@ -738,19 +797,21 @@ SQL> SELECT C.licenseID, C.name
   2  FROM customer C
   3  WHERE NOT EXISTS ((SELECT Cr.serialNum
   4  		     FROM car Cr
-  5  		     WHERE Cr.carType = 'luxury')
+  5  		     WHERE Cr.serialNum = 2771)
   6  		     MINUS
   7  		     (SELECT Cr.serialNum
   8  		     FROM rental R, Car Cr
   9  		     WHERE R.carSerialNum = Cr.serialNum AND
  10  			 R.renterLicenseID = C.licenseID AND
- 11  			 Cr.carType = 'luxury'));
+ 11  			 Cr.serialNum = 2771));
 
  LICENSEID NAME                                                                 
 ---------- --------------------                                                 
-        10 Boby Brown                                                           
+        12 Avery Brooks                                                         
+        13 Nana Visitor                                                         
+        18 Mr. Chicken                                                          
 
-1 row selected.
+3 rows selected.
 
 SQL> --
 SQL> /*
@@ -763,7 +824,7 @@ SQL> SELECT E.eSSN, E.name, C.name
 
       ESSN NAME                 NAME                                            
 ---------- -------------------- --------------------                            
- 123456789 Ian Hislop           Boby Brown                                      
+ 123456789 Ian Hislop           Bobby Brown                                     
  123456789 Ian Hislop           John Johnson                                    
  123456789 Ian Hislop           Avery Brooks                                    
  123456789 Ian Hislop           Nana Visitor                                    

@@ -25,6 +25,7 @@ insert into employee values(123abZH28, 'Grant Iverson', 0, '04-12-2018');
 insert into car values(1962, 'Toyota Prius', 'economy', 86, 'black', 'RED69323', 2015, 1);
 insert into car values(74656, 'BMW M3', 'premium', 212, 'yellow', 'DISCO5', 2019, 0);
 insert into car values(2771, 'Rolls Royce Phantom', 'luxury', 555, 'gold', 'OPC 1546', 2016, 2);
+insert into car values(4003, 'Bently Continental', 'luxury', 525, 'navy', 'FDC 5499', 2014, 2);
 insert into car values(8008, 'Oldsmobile Grantmobile','premium', 250, 'hot pink', 'NCC 1701',1995, 1);
 
 -- Cars at Old Kent Road --
@@ -79,7 +80,8 @@ insert into customer values(18, 'Allstate', '7449 Whistleville',30, 'Mr. Chicken
 --4 TABLE JOIN RENTALs--
 insert into rental values(0001, 224, '06-02-2012', '06-04-2012', 300, 10, 0, 0001);
 insert into rental values(0002, 1200, '11-8-2016', '01-01-2017', 2800, 11, 0, 0003);
-insert into rental values(0003, 900, '02-25-2019', '02-27-2019', 310, 10, 2, 2771);
+insert into rental values(0003, 1100, '02-25-2019', '02-27-2019', 310, 12, 2, 2771);
+insert into rental values(0004, 2625, '06-02-2015', '06-07-2015' 636, 13, 2, 4003);
 --customer tables that should work -- -- 
 /*
 insert into customer values(1,'NationWide',24581 Chesterfeild,25,Richard Nixon,382462847);
