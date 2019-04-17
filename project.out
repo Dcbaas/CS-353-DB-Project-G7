@@ -7,42 +7,17 @@ SQL> Vlasia Niotis
 SQL> Grant Iversen
 SQL> */
 SQL> --
+SQL> SET FEEDBACK OFF
 SQL> DROP TABLE branch CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE car CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE employee CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE customer CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE rental CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE repair_shop CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE repair_history CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE languages CASCADE CONSTRAINTS;
-
-Table dropped.
-
 SQL> DROP TABLE service CASCADE CONSTRAINTS;
-
-Table dropped.
-
+SQL> SET FEEDBACK ON
 SQL> --
 SQL> CREATE TABLE car(
   2  	 serialNum INTEGER PRIMARY KEY,
@@ -79,7 +54,7 @@ Table created.
 SQL> --
 SQL> CREATE TABLE employee(
   2  	 eSSN	   INTEGER PRIMARY KEY,
-  3  	 name	   CHAR(20) NOT NULL,
+  3  	 eName	    CHAR(20) NOT NULL,
   4  	 bID	   INTEGER,
   5  	 supervisorSSN INTEGER NULL,
   6  	 startDate DATE
@@ -93,7 +68,7 @@ SQL> CREATE TABLE customer(
   3  	 insurance   CHAR(20),
   4  	 billingAddr CHAR(30),
   5  	 age	     INTEGER,
-  6  	 name	     CHAR(20) NOT NULL,
+  6  	 cName	      CHAR(20) NOT NULL,
   7  	 consultantSSN INTEGER,
   8  	 --
   9  	 CONSTRAINT customerIC1 CHECK(age > 25)
@@ -324,7 +299,7 @@ SQL> insert into repair_history values(1962, 2017, 100, 1);
 insert into repair_history values(1962, 2017, 100, 1)
 *
 ERROR at line 1:
-ORA-00001: unique constraint (BAASDAV.SYS_C00713838) violated 
+ORA-00001: unique constraint (BAASDAV.SYS_C00726963) violated 
 
 
 SQL> --
@@ -336,6 +311,9 @@ SQL> insert into languages values(885414789, 'Arabic');
 SQL> --
 SQL> 
 SQL> --
+SQL> /*
+SQL> For the sake of time and effeciency, our driver licence numbers were smaller than would normally be found on regular driver's licences
+SQL> */
 SQL> insert into customer values(10,'OurCredit','3257 Southfeild',42,'Bobby Brown',123456789);
 SQL> insert into customer values(11,'Sky','64839 Johnsonville',58,'John Johnson',123456789);
 SQL> insert into customer values(12,'OurCredit','3257 Southfeild',70,'Avery Brooks',123456789);
@@ -427,7 +405,7 @@ SQL> --
 SQL> SELECT *
   2  FROM employee;
 
-      ESSN NAME                        BID SUPERVISORSSN STARTDATE              
+      ESSN ENAME                       BID SUPERVISORSSN STARTDATE              
 ---------- -------------------- ---------- ------------- ----------             
  996533256 Larry Kotman                  0               01-01-1975             
   23456789 Sarah Pasco                   0     996533256 10-01-2000             
@@ -448,7 +426,7 @@ SQL> SELECT *
 
  LICENSEID INSURANCE            BILLINGADDR                           AGE       
 ---------- -------------------- ------------------------------ ----------       
-NAME                 CONSULTANTSSN                                              
+CNAME                CONSULTANTSSN                                              
 -------------------- -------------                                              
         10 OurCredit            3257 Southfeild                        42       
 Bobby Brown              123456789                                              
@@ -462,7 +440,7 @@ Avery Brooks             123456789
 
  LICENSEID INSURANCE            BILLINGADDR                           AGE       
 ---------- -------------------- ------------------------------ ----------       
-NAME                 CONSULTANTSSN                                              
+CNAME                CONSULTANTSSN                                              
 -------------------- -------------                                              
         13 Memic                2345 Bajor Lane                        68       
 Nana Visitor             123456789                                              
@@ -476,7 +454,7 @@ Nicole de Boer           987654321
 
  LICENSEID INSURANCE            BILLINGADDR                           AGE       
 ---------- -------------------- ------------------------------ ----------       
-NAME                 CONSULTANTSSN                                              
+CNAME                CONSULTANTSSN                                              
 -------------------- -------------                                              
         16 Ferenicare           Deep Space 9                           67       
 Quark                    987654321                                              
@@ -641,14 +619,14 @@ SQL> /*
 SQL> Self Join
 SQL> Find the ssn, and names, and start dates of all the employees that work at branch 2 who started before thier supervisior started work.
 SQL> */
-SQL> SELECT E1.eSSN, E1.name, E1.startDate
+SQL> SELECT E1.eSSN, E1.eName, E1.startDate
   2  FROM employee E1, employee E2
   3  WHERE E1.supervisorSSN = E2.eSSN AND
   4  	 E1.startDate < E2.startDate AND
   5  	 E1.bID = 2
   6  ORDER BY E1.eSSN;
 
-      ESSN NAME                 STARTDATE                                       
+      ESSN ENAME                STARTDATE                                       
 ---------- -------------------- ----------                                      
  112233445 Lewis Hamilton       07-08-2009                                      
  223344556 William Riker        09-28-1987                                      
@@ -706,14 +684,14 @@ SQL> /*
 SQL> GROUP BY, HAVING, ORDER BY all in the sqme query.
 SQL> Find the ssn, and name of all employees who have consulted with more than 3 customers and list how many they have consulted with.
 SQL> */
-SQL> SELECT E.eSSN, E.name, COUNT(*)
+SQL> SELECT E.eSSN, E.eName, COUNT(*)
   2  FROM customer C, employee E
   3  WHERE E.eSSN = C.consultantSSN
-  4  GROUP BY E.eSSN, E.name
+  4  GROUP BY E.eSSN, E.eName
   5  HAVING COUNT(*) > 3
   6  ORDER BY COUNT(*);
 
-      ESSN NAME                   COUNT(*)                                      
+      ESSN ENAME                  COUNT(*)                                      
 ---------- -------------------- ----------                                      
  987654321 Paul Merton                   4                                      
  123456789 Ian Hislop                    5                                      
@@ -762,7 +740,7 @@ premium              DISCO5
 
 SQL> --
 SQL> /*
-SQL> non correlated subquery
+SQL> Non-Correlated subquery
 SQL> Find the serial number, rate, model, year, type, and licece plate number of every car that has a rate greater than $150 but has yet to be rented out.
 SQL> */
 SQL> SELECT C.serialNum, C.CarRate, C.carModel, C.year, C.carType, C.licensePlateNum
@@ -791,9 +769,10 @@ premium              DISCO5
 SQL> 
 SQL> --
 SQL> /*
-SQL> A relational Division query
+SQL> A Relational Division Query
+SQL> Find all customers that rented out the car with the vin number 2771.
 SQL> */
-SQL> SELECT C.licenseID, C.name
+SQL> SELECT C.licenseID, C.cName
   2  FROM customer C
   3  WHERE NOT EXISTS ((SELECT Cr.serialNum
   4  		     FROM car Cr
@@ -805,7 +784,7 @@ SQL> SELECT C.licenseID, C.name
  10  			 R.renterLicenseID = C.licenseID AND
  11  			 Cr.serialNum = 2771));
 
- LICENSEID NAME                                                                 
+ LICENSEID CNAME                                                                
 ---------- --------------------                                                 
         12 Avery Brooks                                                         
         13 Nana Visitor                                                         
@@ -816,13 +795,13 @@ SQL> SELECT C.licenseID, C.name
 SQL> --
 SQL> /*
 SQL> An outer join query
-SQL> List all employees and list thier ....
+SQL> List all employees and any customers they have consulted with. List the employee's SSN and name and list the name of the customer they helped
 SQL> */
-SQL> SELECT E.eSSN, E.name, C.name
+SQL> SELECT E.eSSN, E.eName, C.cName
   2  FROM employee E LEFT OUTER JOIN
   3  			 customer C ON E.eSSN = C.consultantSSN;
 
-      ESSN NAME                 NAME                                            
+      ESSN ENAME                CNAME                                           
 ---------- -------------------- --------------------                            
  123456789 Ian Hislop           Bobby Brown                                     
  123456789 Ian Hislop           John Johnson                                    
@@ -836,7 +815,7 @@ SQL> SELECT E.eSSN, E.name, C.name
  112233445 Lewis Hamilton                                                       
  996533256 Larry Kotman                                                         
 
-      ESSN NAME                 NAME                                            
+      ESSN ENAME                CNAME                                           
 ---------- -------------------- --------------------                            
  223344556 William Riker                                                        
  192837465 Danny Dire                                                           
@@ -847,5 +826,5 @@ SQL> SELECT E.eSSN, E.name, C.name
 
 17 rows selected.
 
-SQL> --
-SQL> SPOOL OFF
+SQL> 
+SQL> SET ECHO OFF
