@@ -1,4 +1,4 @@
-SPOOL project.out
+SPOOL project.out 
 SET ECHO ON
 /* 
 CIS 353 - Database Design Project
@@ -9,6 +9,7 @@ Vlasia Niotis
 Grant Iversen
 */ 
 --
+SET FEEDBACK OFF
 DROP TABLE branch CASCADE CONSTRAINTS;
 DROP TABLE car CASCADE CONSTRAINTS;
 DROP TABLE employee CASCADE CONSTRAINTS;
@@ -18,6 +19,7 @@ DROP TABLE repair_shop CASCADE CONSTRAINTS;
 DROP TABLE repair_history CASCADE CONSTRAINTS;
 DROP TABLE languages CASCADE CONSTRAINTS;
 DROP TABLE service CASCADE CONSTRAINTS;
+SET FEEDBACK ON
 --
 CREATE TABLE car(
     serialNum INTEGER PRIMARY KEY,
@@ -48,7 +50,7 @@ CREATE TABLE branch(
 --
 CREATE TABLE employee(
     eSSN      INTEGER PRIMARY KEY,
-    name      CHAR(20) NOT NULL,
+    eName      CHAR(20) NOT NULL,
     bID       INTEGER,
     supervisorSSN INTEGER NULL,
     startDate DATE
@@ -59,7 +61,7 @@ CREATE TABLE customer(
     insurance   CHAR(20),
     billingAddr CHAR(30),
     age         INTEGER,
-    name        CHAR(20) NOT NULL,
+    cName        CHAR(20) NOT NULL,
     consultantSSN INTEGER,
     --
     CONSTRAINT customerIC1 CHECK(age > 25)
@@ -232,6 +234,9 @@ insert into languages values(885414789, 'Arabic');
 --
 
 -- 
+/*
+For the sake of time and effeciency, our driver licence numbers were smaller than would normally be found on regular driver's licences
+*/
 insert into customer values(10,'OurCredit','3257 Southfeild',42,'Bobby Brown',123456789);
 insert into customer values(11,'Sky','64839 Johnsonville',58,'John Johnson',123456789);
 insert into customer values(12,'OurCredit','3257 Southfeild',70,'Avery Brooks',123456789);
@@ -307,7 +312,7 @@ ORDER BY R.startDate;
 Self Join
 Find the ssn, and names, and start dates of all the employees that work at branch 2 who started before thier supervisior started work.
 */
-SELECT E1.eSSN, E1.name, E1.startDate
+SELECT E1.eSSN, E1.eName, E1.startDate
 FROM employee E1, employee E2
 WHERE E1.supervisorSSN = E2.eSSN AND
     E1.startDate < E2.startDate AND 
@@ -342,10 +347,10 @@ GROUP BY C.licensePlateNum, C.carModel, C.year;
 GROUP BY, HAVING, ORDER BY all in the sqme query.
 Find the ssn, and name of all employees who have consulted with more than 3 customers and list how many they have consulted with. 
 */
-SELECT E.eSSN, E.name, COUNT(*)
+SELECT E.eSSN, E.eName, COUNT(*)
 FROM customer C, employee E
 WHERE E.eSSN = C.consultantSSN
-GROUP BY E.eSSN, E.name
+GROUP BY E.eSSN, E.eName
 HAVING COUNT(*) > 3
 ORDER BY COUNT(*);
 --
@@ -362,7 +367,7 @@ WHERE C.carRate >
 ORDER BY C.serialNum;
 --
 /*
-non correlated subquery
+Non-Correlated subquery
 Find the serial number, rate, model, year, type, and licece plate number of every car that has a rate greater than $150 but has yet to be rented out.
 */
 SELECT C.serialNum, C.CarRate, C.carModel, C.year, C.carType, C.licensePlateNum
@@ -374,9 +379,10 @@ WHERE C.carRate > 150 AND
 
 --
 /*
-A relational Division query
+A Relational Division Query
+Find all customers that rented out the car with the vin number 2771.
 */
-SELECT C.licenseID, C.name
+SELECT C.licenseID, C.cName
 FROM customer C
 WHERE NOT EXISTS ((SELECT Cr.serialNum
                 FROM car Cr
@@ -390,10 +396,11 @@ WHERE NOT EXISTS ((SELECT Cr.serialNum
 --
 /*
 An outer join query 
-List all employees and list thier ....
+List all employees and any customers they have consulted with. List the employee's SSN and name and list the name of the customer they helped
 */
-SELECT E.eSSN, E.name, C.name
+SELECT E.eSSN, E.eName, C.cName
 FROM employee E LEFT OUTER JOIN 
                     customer C ON E.eSSN = C.consultantSSN;
---
+
+SET ECHO OFF
 SPOOL OFF
